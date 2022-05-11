@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.valdi.animedownloader.app.controller.NewDownloadController">
+    <bottom>
+        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <items>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button fx:id="queryButton" mnemonicParsing="false" onAction="#onQuery" text="Query Episodes"/>
+                <Button fx:id="downloadButton" disable="true" mnemonicParsing="false" onAction="#onDownload"
+                        text="Download"/>
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#onClose" text="Close"/>
+            </items>
+        </ToolBar>
+    </bottom>
+    <top>
+        <AnchorPane prefHeight="300.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label layoutX="40.0" layoutY="29.0" text="Link anime" AnchorPane.bottomAnchor="254.0"
+                       AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="402.0" AnchorPane.topAnchor="29.0"/>
+                <TextField fx:id="linkField" layoutX="180.0" layoutY="30.0" prefHeight="25.0" prefWidth="280.0"
+                           AnchorPane.bottomAnchor="250.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="40.0"
+                           AnchorPane.topAnchor="25.0"/>
+                <Button layoutX="40.0" layoutY="65.0" mnemonicParsing="false" onAction="#selectFolder"
+                        text="Select Folder" AnchorPane.bottomAnchor="210.0" AnchorPane.leftAnchor="40.0"
+                        AnchorPane.topAnchor="65.0"/>
+                <TextField fx:id="folderField" layoutX="180.0" layoutY="68.0" prefHeight="25.0" prefWidth="280.0"
+                           AnchorPane.bottomAnchor="210.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="40.0"
+                           AnchorPane.topAnchor="65.0"/>
+                <CheckListView fx:id="episodesList" layoutX="40.0" layoutY="121.0" prefHeight="165.0" prefWidth="420.0"
+                               AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0"
+                               AnchorPane.topAnchor="115.0"/>
+            </children>
+        </AnchorPane>
+    </top>
+</BorderPane>

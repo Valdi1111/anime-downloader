@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox fx:id="pane" alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.valdi.animedownloader.app.controller.DownloadItemController">
+    <children>
+        <CheckBox fx:id="selectCheck" mnemonicParsing="false">
+            <HBox.margin>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+            </HBox.margin>
+        </CheckBox>
+        <FlowPane alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="275.0" vgap="5.0">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <children>
+                <Label fx:id="nameLabel" prefHeight="20.0" prefWidth="265.0" text="Name"/>
+                <ProgressBar fx:id="progressBar" prefHeight="20.0" prefWidth="265.0" progress="0.0"/>
+            </children>
+        </FlowPane>
+        <FlowPane alignment="CENTER_LEFT" layoutX="56.0" layoutY="10.0" prefHeight="60.0" prefWidth="50.0" vgap="5.0">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <children>
+                <Label fx:id="timeLabel" prefHeight="20.0" prefWidth="40.0" text="00:00"/>
+                <Label fx:id="percentageLabel" layoutX="15.0" layoutY="32.0" prefHeight="20.0" prefWidth="40.0"
+                       text="100%"/>
+            </children>
+        </FlowPane>
+        <FlowPane alignment="CENTER_LEFT" layoutX="331.0" layoutY="10.0" prefHeight="60.0" prefWidth="135.0" vgap="5.0">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <children>
+                <Label fx:id="progressLabel" prefHeight="20.0" prefWidth="125.0" text="1000MB of 1000MB"/>
+                <Label fx:id="speedLabel" layoutX="15.0" layoutY="32.0" prefHeight="20.0" prefWidth="125.0"
+                       text="10kb/s"/>
+            </children>
+        </FlowPane>
+    </children>
+    <opaqueInsets>
+        <Insets/>
+    </opaqueInsets>
+</HBox>

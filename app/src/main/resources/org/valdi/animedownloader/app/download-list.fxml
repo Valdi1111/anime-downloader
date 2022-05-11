@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.valdi.animedownloader.app.controller.DownloadListController"
+            prefHeight="400.0" prefWidth="600.0">
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Close"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="350.0" prefWidth="600.0" vbarPolicy="ALWAYS"
+                    BorderPane.alignment="CENTER">
+            <content>
+                <VBox fx:id="downloadsPane" stylesheets="@download-list.css"/>
+            </content>
+        </ScrollPane>
+    </center>
+    <bottom>
+        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <items>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" onAction="#onDownload" text="Download"/>
+                <Button mnemonicParsing="false" onAction="#onExit" text="Exit"/>
+            </items>
+        </ToolBar>
+    </bottom>
+</BorderPane>
