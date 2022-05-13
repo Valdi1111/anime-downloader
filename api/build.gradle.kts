@@ -18,9 +18,18 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Valdi1111/anime-downloader")
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("TOKEN")
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
             }
+        }
+    }
+    publications {
+        register<MavenPublication>("mavenJava") {
+            groupId = "org.valdi"
+            artifactId = "animedownloader-api"
+            version = "1.0.0"
+
+            from(components["java"])
         }
     }
 }
