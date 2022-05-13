@@ -250,6 +250,15 @@ public class DownloadItemController extends HBox {
     }
 
     /**
+     * Indicates whether this download has ended.
+     *
+     * @return true if ended, false otherwise
+     */
+    public boolean hasEnded() {
+        return this.getState().isEnded();
+    }
+
+    /**
      * Indicates the state of this download item.
      *
      * @return the current download state

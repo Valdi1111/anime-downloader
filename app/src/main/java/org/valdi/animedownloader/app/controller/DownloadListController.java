@@ -9,6 +9,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.valdi.animedownloader.api.episode.IEpisode;
 import org.valdi.animedownloader.app.App;
+import org.valdi.animedownloader.app.download.DownloadState;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,12 +82,13 @@ public class DownloadListController {
      * Remove selected items from download list.
      */
     @FXML
-    private void removeDownloads() {
+    private void onClear() {
         this.downloadList.getChildren().removeAll(
                 this.downloadList.getChildren().stream()
                         .filter(DownloadItemController.class::isInstance)
                         .map(DownloadItemController.class::cast)
                         .filter(DownloadItemController::isSelected)
+                        .filter(DownloadItemController::hasEnded)
                         .collect(Collectors.toList())
         );
     }
