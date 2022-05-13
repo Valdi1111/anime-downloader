@@ -11,7 +11,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckListView;
 import org.valdi.animedownloader.api.AnimeDownloader;
-import org.valdi.animedownloader.api.downloader.AnimeWorldDownloder;
 import org.valdi.animedownloader.api.episode.IEpisode;
 import org.valdi.animedownloader.app.App;
 import org.valdi.animedownloader.app.episode.EpisodeItem;
@@ -26,21 +25,21 @@ import java.util.stream.Collectors;
  * Controller for new-download.fxml
  */
 public class NewDownloadController {
-    // Body
+    // Body components
     @FXML
     private TextField linkField;
     @FXML
     private TextField folderField;
     @FXML
     private CheckListView<EpisodeItem> episodesList;
-    // Toolbar
+    // Toolbar components
     @FXML
     private Button queryButton;
     @FXML
     private Button downloadButton;
     @FXML
     private Button closeButton;
-
+    // Class fields
     private final AnimeDownloader downloader;
     private final List<IEpisode> episodes;
     private File folder;
@@ -50,7 +49,7 @@ public class NewDownloadController {
      */
     public NewDownloadController() {
         this.downloader = new AnimeDownloader();
-        this.downloader.registerHandler(new AnimeWorldDownloder());
+        this.downloader.registerDefaultHandlers();
         this.episodes = new ArrayList<>();
     }
 

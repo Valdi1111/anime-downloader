@@ -1,5 +1,6 @@
 package org.valdi.animedownloader.api;
 
+import org.valdi.animedownloader.api.downloader.AnimeWorldDownloder;
 import org.valdi.animedownloader.api.downloader.IDownloader;
 import org.valdi.animedownloader.api.episode.IEpisode;
 
@@ -28,6 +29,13 @@ public class AnimeDownloader implements IDownloader {
      */
     public void registerHandler(final IDownloader downloader) {
         this.downloaders.add(downloader);
+    }
+
+    /**
+     * Register default downloader handlers.
+     */
+    public void registerDefaultHandlers() {
+        this.registerHandler(new AnimeWorldDownloder());
     }
 
     /**

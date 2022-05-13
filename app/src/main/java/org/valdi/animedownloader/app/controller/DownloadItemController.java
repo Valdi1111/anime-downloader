@@ -28,6 +28,7 @@ import java.text.StringCharacterIterator;
  * Controller for download-item.fxml
  */
 public class DownloadItemController extends HBox {
+    // Body components
     @FXML
     private CheckBox selectedCheck;
     @FXML
@@ -42,7 +43,7 @@ public class DownloadItemController extends HBox {
     private Label progressLabel;
     @FXML
     private Label speedLabel;
-
+    // Class fields
     private final ObjectProperty<DownloadState> state;
     private final IEpisode episode;
     private final File folder;

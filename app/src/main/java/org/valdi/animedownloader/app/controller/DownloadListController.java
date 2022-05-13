@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  * Controller for download-list.fxml
  */
 public class DownloadListController {
+    // Body components
     @FXML
     private VBox downloadList;
 
