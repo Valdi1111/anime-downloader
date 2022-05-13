@@ -7,14 +7,16 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.valdi.animedownloader.api.episode.IEpisode;
-import org.valdi.animedownloader.app.DownloadResult;
-import org.valdi.animedownloader.app.DownloadTask;
+import org.valdi.animedownloader.app.App;
+import org.valdi.animedownloader.app.download.DownloadState;
+import org.valdi.animedownloader.app.download.DownloadTask;
 
 import java.awt.*;
 import java.io.File;
@@ -22,6 +24,9 @@ import java.io.IOException;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
+/**
+ * Controller for download-item.fxml
+ */
 public class DownloadItemController extends HBox {
     @FXML
     private CheckBox selectedCheck;
@@ -38,15 +43,23 @@ public class DownloadItemController extends HBox {
     @FXML
     private Label speedLabel;
 
-    private final ObjectProperty<DownloadResult> downloadResult;
+    private final ObjectProperty<DownloadState> state;
     private final IEpisode episode;
     private final File folder;
     private final DownloadTask task;
     private final Thread thread;
     private final ContextMenu menu;
 
-    public DownloadItemController(final IEpisode episode, final File folder) {
-        this.downloadResult = new SimpleObjectProperty<>(DownloadResult.WAITING);
+    /**
+     * Create a new instance of {@link DownloadItemController}, setup context menu,
+     * setup download task and load components from fxml file.
+     *
+     * @param episode the episode to download
+     * @param folder  the folder to download the file
+     * @throws IOException on error
+     */
+    public DownloadItemController(final IEpisode episode, final File folder) throws IOException {
+        this.state = new SimpleObjectProperty<>(DownloadState.WAITING);
         this.episode = episode;
         this.folder = folder;
         // Setup download task
@@ -56,8 +69,25 @@ public class DownloadItemController extends HBox {
         // Setup context menu
         this.menu = new ContextMenu();
         this.setupContextMenu();
+        // Load from fxml
+        this.loadFromFile();
     }
 
+    /**
+     * Load components from fxml file.
+     *
+     * @throws IOException on error
+     */
+    private void loadFromFile() throws IOException {
+        final FXMLLoader item = new FXMLLoader(App.class.getResource("download-item.fxml"));
+        item.setController(this);
+        item.setRoot(this);
+        item.load();
+    }
+
+    /**
+     * Initialize components and start download task.
+     */
     @FXML
     private void initialize() {
         // Setup components
@@ -68,16 +98,30 @@ public class DownloadItemController extends HBox {
         this.thread.start();
     }
 
+    /**
+     * Execute action on mouse press:
+     * <ul>
+     *     <li>Select item on left click.</li>
+     *     <li>Show context menu on right click.</li>
+     * </ul>
+     *
+     * @param event the event
+     */
     @FXML
     private void onMousePressed(final MouseEvent event) {
-        if (event.isSecondaryButtonDown()) {
-            this.menu.show(this, event.getScreenX(), event.getScreenY());
-        }
+        // Select item on left click
         if (event.isPrimaryButtonDown()) {
             this.selectedProperty().setValue(!this.isSelected());
         }
+        // Show context menu on right click
+        if (event.isSecondaryButtonDown()) {
+            this.menu.show(this, event.getScreenX(), event.getScreenY());
+        }
     }
 
+    /**
+     * Setup context menu.
+     */
     private void setupContextMenu() {
         final MenuItem open = new MenuItem("Open folder");
         open.setOnAction(this::onOpen);
@@ -86,19 +130,12 @@ public class DownloadItemController extends HBox {
         this.menu.getItems().addAll(open, cancel);
     }
 
+    /**
+     * Setup download task.
+     */
     private void setupDownloadTask() {
-        // Setup timer
-        long startTime = System.nanoTime();
-        final AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                // update time
-                long elapsedMillis = (now - startTime) / 1_000_000_000;
-                long minutes = elapsedMillis / 60;
-                long seconds = elapsedMillis % 60;
-                timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
-            }
-        };
+        // Setup updater
+        final Updater updater = new Updater();
         // Setup progress updaters
         this.task.progressProperty().addListener((observable, oldValue, newValue) -> {
             double percentage = newValue.doubleValue() * 100D;
@@ -111,39 +148,51 @@ public class DownloadItemController extends HBox {
         });
         // Setup task behaviours
         this.task.setOnRunning(v -> {
-            this.downloadResultProperty().setValue(DownloadResult.RUNNING);
-            timer.start();
+            this.stateProperty().setValue(DownloadState.RUNNING);
+            updater.start();
         });
         this.task.setOnSucceeded(v -> {
-            this.downloadResultProperty().setValue(this.task.getValue());
+            this.stateProperty().setValue(this.task.getValue());
             this.menu.getItems().remove(1);
-            timer.stop();
-            if (this.task.getValue() == DownloadResult.FILE_ALREADY_EXISTS) {
+            updater.stop();
+            if (this.task.getValue() == DownloadState.FILE_ALREADY_EXISTS) {
                 this.changeState("cancelled", "File already exists!");
                 return;
             }
             this.changeState("succeeded", "Done!");
         });
         this.task.setOnCancelled(v -> {
-            this.downloadResultProperty().setValue(DownloadResult.CANCELLED);
+            this.stateProperty().setValue(DownloadState.CANCELLED);
             this.menu.getItems().remove(1);
-            timer.stop();
+            updater.stop();
             this.changeState("cancelled", "Cancelled!");
         });
         this.task.setOnFailed(v -> {
-            this.downloadResultProperty().setValue(DownloadResult.FAILED);
+            this.stateProperty().setValue(DownloadState.FAILED);
             this.menu.getItems().remove(1);
-            timer.stop();
+            updater.stop();
             this.changeState("failed", "Failed!");
         });
     }
 
+    /**
+     * Update task state on gui.
+     *
+     * @param value progress bar class
+     * @param name  speed label text value
+     */
     private void changeState(final String value, final String name) {
         this.progressBar.pseudoClassStateChanged(PseudoClass.getPseudoClass("running"), false);
         this.progressBar.pseudoClassStateChanged(PseudoClass.getPseudoClass(value), true);
         this.speedLabel.setText(name);
     }
 
+    /**
+     * Convert bytes to pretty string.
+     *
+     * @param bytes the bytes amount
+     * @return the string
+     */
     private String prettyBytes(long bytes) {
         long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
         if (absB < 1024) {
@@ -159,6 +208,11 @@ public class DownloadItemController extends HBox {
         return String.format("%.2f%cB", value / 1024.0, ci.current());
     }
 
+    /**
+     * Context menu action - Open folder
+     *
+     * @param event the event
+     */
     private void onOpen(final ActionEvent event) {
         try {
             Desktop.getDesktop().open(this.folder);
@@ -167,35 +221,107 @@ public class DownloadItemController extends HBox {
         }
     }
 
+    /**
+     * Context menu action - Cancel
+     *
+     * @param event the event
+     */
     private void onCancel(final ActionEvent event) {
-        this.cancel();
+        this.cancel(false);
     }
 
-    public void cancel() {
+    /**
+     * Cancel this download, delete the file.
+     *
+     * @param wait wait until the task is done
+     */
+    public void cancel(boolean wait) {
         if (this.task.isRunning()) {
             this.task.cancel(true);
         }
-        try {
-            this.thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (wait) {
+            try {
+                this.thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public DownloadResult getDownloadResult() {
-        return this.downloadResult.get();
+    /**
+     * Indicates the state of this download item.
+     *
+     * @return the current download state
+     */
+    public DownloadState getState() {
+        return this.state.get();
     }
 
-    public ObjectProperty<DownloadResult> downloadResultProperty() {
-        return this.downloadResult;
+    /**
+     * Indicates the state of this download item.
+     *
+     * @return the state property
+     */
+    public ObjectProperty<DownloadState> stateProperty() {
+        return this.state;
     }
 
+    /**
+     * Indicates whether this download item is selected.
+     *
+     * @return true if selected, false otherwise
+     */
     public boolean isSelected() {
         return this.selectedCheck.isSelected();
     }
 
+    /**
+     * Indicates whether this download item is selected.
+     *
+     * @return the selected property
+     */
     public BooleanProperty selectedProperty() {
         return this.selectedCheck.selectedProperty();
+    }
+
+    private class Updater extends AnimationTimer {
+        private long startTime;
+        private long lastDone = 0L;
+        private long lastTime = startTime;
+
+        @Override
+        public void start() {
+            super.start();
+            this.startTime = System.nanoTime();
+            this.lastTime = startTime;
+            this.lastDone = 0L;
+        }
+
+        @Override
+        public void handle(long now) {
+            // update time
+            this.updateTime(now);
+            // update speed
+            this.updateSpeed(now);
+        }
+
+        private void updateTime(long now) {
+            long elapsed = (now - this.startTime) / 1_000_000_000;
+            long minutes = elapsed / 60;
+            long seconds = elapsed % 60;
+            timeLabel.setText(String.format("%02d:%02d", minutes, seconds));
+        }
+
+        private void updateSpeed(long now) {
+            if ((now - this.lastTime) >= 1_000_000_000) {
+                this.lastTime = now;
+                long done = task.workDoneProperty().longValue();
+                long delta = (done - this.lastDone);
+                this.lastDone = done;
+                speedLabel.setText(String.format("%s/s", prettyBytes(delta)));
+            }
+        }
+
     }
 
 }

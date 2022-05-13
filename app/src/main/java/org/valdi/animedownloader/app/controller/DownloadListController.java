@@ -15,10 +15,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for download-list.fxml
+ */
 public class DownloadListController {
     @FXML
     private VBox downloadList;
 
+    /**
+     * Open new-download gui.
+     *
+     * @throws IOException on error
+     */
     @FXML
     private void onDownload() throws IOException {
         // Load new download
@@ -44,24 +52,33 @@ public class DownloadListController {
         // Download episodes
         for (final IEpisode episode : episodes) {
             final DownloadItemController download = new DownloadItemController(episode, folder);
-            final FXMLLoader item = new FXMLLoader(App.class.getResource("download-item.fxml"));
-            item.setController(download);
-            item.setRoot(download);
-            item.load();
             this.downloadList.getChildren().add(download);
         }
     }
 
+    /**
+     * Close program.
+     */
     @FXML
-    private void onExit() throws InterruptedException {
+    private void onExit() {
+        this.close();
+    }
+
+    /**
+     * Close the window and stop all downloads.
+     */
+    public void close() {
         this.downloadList.getChildren().stream()
                 .filter(DownloadItemController.class::isInstance)
                 .map(DownloadItemController.class::cast)
-                .forEach(DownloadItemController::cancel);
+                .forEach(c -> c.cancel(true));
         Platform.exit();
         System.exit(0);
     }
 
+    /**
+     * Remove selected items from download list.
+     */
     @FXML
     private void removeDownloads() {
         this.downloadList.getChildren().removeAll(

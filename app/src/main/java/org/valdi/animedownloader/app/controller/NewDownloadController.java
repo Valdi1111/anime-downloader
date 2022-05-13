@@ -14,13 +14,17 @@ import org.valdi.animedownloader.api.AnimeDownloader;
 import org.valdi.animedownloader.api.downloader.AnimeWorldDownloder;
 import org.valdi.animedownloader.api.episode.IEpisode;
 import org.valdi.animedownloader.app.App;
-import org.valdi.animedownloader.app.EpisodeItem;
+import org.valdi.animedownloader.app.episode.EpisodeItem;
+import org.valdi.animedownloader.app.episode.EpisodeItemConverter;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller for new-download.fxml
+ */
 public class NewDownloadController {
     // Body
     @FXML
@@ -41,18 +45,27 @@ public class NewDownloadController {
     private final List<IEpisode> episodes;
     private File folder;
 
+    /**
+     * Create a new instance of {@link NewDownloadController}.
+     */
     public NewDownloadController() {
         this.downloader = new AnimeDownloader();
         this.downloader.registerHandler(new AnimeWorldDownloder());
         this.episodes = new ArrayList<>();
     }
 
+    /**
+     * Initialize components.
+     */
     @FXML
     private void initialize() {
         this.folderField.setText(App.getFolder().getAbsolutePath());
-        this.episodesList.setCellFactory(f -> new CheckBoxListCell<>(EpisodeItem::selectedProperty, new EpisodeItem.Converter()));
+        this.episodesList.setCellFactory(f -> new CheckBoxListCell<>(EpisodeItem::selectedProperty, new EpisodeItemConverter()));
     }
 
+    /**
+     * Select download folder for episodes.
+     */
     @FXML
     private void selectFolder() {
         final DirectoryChooser chooser = new DirectoryChooser();
@@ -62,6 +75,9 @@ public class NewDownloadController {
         this.folderField.setText(this.folder.getAbsolutePath());
     }
 
+    /**
+     * Query episodes from url.
+     */
     @FXML
     private void onQuery() {
         // Query episodes
@@ -95,6 +111,9 @@ public class NewDownloadController {
         this.downloadButton.setDisable(false);
     }
 
+    /**
+     * Start download of episodes.
+     */
     @FXML
     private void onDownload() {
         if (this.folder == null) {
@@ -109,12 +128,20 @@ public class NewDownloadController {
         this.onClose();
     }
 
+    /**
+     * Close gui.
+     */
     @FXML
     private void onClose() {
         final Stage primaryStage = (Stage) this.closeButton.getScene().getWindow();
         primaryStage.close();
     }
 
+    /**
+     * Show alert error with a message.
+     *
+     * @param msg error message
+     */
     private void showError(final String msg) {
         final Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.CLOSE);
         final Stage stage = (Stage) this.episodesList.getScene().getWindow();
@@ -124,10 +151,20 @@ public class NewDownloadController {
         alert.show();
     }
 
+    /**
+     * Get episodes found in website url.
+     *
+     * @return the list of episodes
+     */
     public List<IEpisode> getEpisodes() {
         return this.episodes;
     }
 
+    /**
+     * Get download folder.
+     *
+     * @return the download folder, null if nothing has been selected.
+     */
     public File getFolder() {
         return this.folder;
     }

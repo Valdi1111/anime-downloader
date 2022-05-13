@@ -8,15 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * General class that collects all instance of {@link IDownloader}.
+ */
 public class AnimeDownloader implements IDownloader {
     private final List<IDownloader> downloaders;
 
+    /**
+     * Create a new instance of {@link AnimeDownloader}.
+     */
     public AnimeDownloader() {
         this.downloaders = new ArrayList<>();
     }
 
     /**
-     * Register new downloader.
+     * Register new downloader handler.
      *
      * @param downloader the new downloader
      */

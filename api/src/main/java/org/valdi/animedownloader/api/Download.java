@@ -8,51 +8,71 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.function.BiConsumer;
 
+/**
+ * Utility class to download an episode.
+ */
 public class Download {
     private final IEpisode episode;
     private final File file;
     private boolean running;
-    private Handler handler;
+    private BiConsumer<Long, Long> handler;
 
+    /**
+     * Create a new instance of {@link Download} given an episode and a destination file.
+     *
+     * @param episode the episode
+     * @param file    the new file of the episode
+     */
     public Download(final IEpisode episode, final File file) {
         this.episode = episode;
         this.file = file;
         this.running = true;
     }
 
-    public void setHandler(final Handler handler) {
+    /**
+     * An action to perform every time there is an update.
+     *
+     * @param handler the handler
+     */
+    public void setHandler(final BiConsumer<Long, Long> handler) {
         this.handler = handler;
     }
 
+    /**
+     * Start download.
+     *
+     * @throws Exception on error
+     */
     public void start() throws Exception {
         // Setup url
         final URL url = new URL(this.episode.getDownloadLink());
         final URLConnection conn = url.openConnection();
         conn.connect();
         // Getting file length
-        int len = conn.getContentLength();
+        long max = conn.getContentLength();
         // Handle progress
         if (this.handler != null) {
-            this.handler.onProgress(0L, len);
+            this.handler.accept(0L, max);
         }
         // Input stream to read file - with 8k buffer
-        try (InputStream input = new BufferedInputStream(url.openStream(), 8192);
-             FileOutputStream output = new FileOutputStream(this.file)) {
+        try (InputStream in = new BufferedInputStream(url.openStream(), 8192);
+             FileOutputStream out = new FileOutputStream(this.file)) {
             int count;
-            long downloaded = 0;
+            long done = 0;
             byte[] data = new byte[1024];
-            while (this.running && (count = input.read(data)) != -1) {
-                downloaded += count;
+            while (this.running && (count = in.read(data)) != -1) {
+                done += count;
                 // handle progress
                 if (this.handler != null) {
-                    this.handler.onProgress(downloaded, len);
+                    this.handler.accept(done, max);
                 }
                 // writing data to file
-                output.write(data, 0, count);
+                out.write(data, 0, count);
             }
             // flushing output
-            output.flush();
+            out.flush();
         }
         // Delete file if download has been stopped
         if (!this.running) {
@@ -60,14 +80,11 @@ public class Download {
         }
     }
 
+    /**
+     * Stop download.
+     */
     public void stop() {
         this.running = false;
-    }
-
-    public interface Handler {
-
-        void onProgress(long workDone, long max);
-
     }
 
 }

@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.valdi.animedownloader.app.controller.DownloadListController;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,6 +20,8 @@ public class MainApplication extends Application {
         if (url != null) {
             stage.getIcons().add(new Image(url.toString()));
         }
+        final DownloadListController controller = loader.getController();
+        stage.setOnCloseRequest(e -> controller.close());
         stage.setTitle(App.NAME);
         stage.setScene(scene);
         stage.setResizable(false);

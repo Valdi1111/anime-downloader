@@ -1,5 +1,8 @@
 package org.valdi.animedownloader.api.episode;
 
+/**
+ * Interface representing an episode.
+ */
 public interface IEpisode {
 
     /**

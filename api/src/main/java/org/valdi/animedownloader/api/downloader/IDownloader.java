@@ -5,6 +5,9 @@ import org.valdi.animedownloader.api.episode.IEpisode;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Interface representing a downloader for a specific website.
+ */
 public interface IDownloader {
 
     /**

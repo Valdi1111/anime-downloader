@@ -6,17 +6,6 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.valdi.animedownloader.app.controller.NewDownloadController">
-    <bottom>
-        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <items>
-                <Pane HBox.hgrow="ALWAYS"/>
-                <Button fx:id="queryButton" mnemonicParsing="false" onAction="#onQuery" text="Query Episodes"/>
-                <Button fx:id="downloadButton" disable="true" mnemonicParsing="false" onAction="#onDownload"
-                        text="Download"/>
-                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#onClose" text="Close"/>
-            </items>
-        </ToolBar>
-    </bottom>
     <top>
         <AnchorPane prefHeight="300.0" prefWidth="500.0" BorderPane.alignment="CENTER">
             <children>
@@ -37,4 +26,15 @@
             </children>
         </AnchorPane>
     </top>
+    <bottom>
+        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <items>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <Button fx:id="queryButton" mnemonicParsing="false" onAction="#onQuery" text="Query"/>
+                <Button fx:id="downloadButton" disable="true" mnemonicParsing="false" onAction="#onDownload"
+                        text="Download"/>
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#onClose" text="Close"/>
+            </items>
+        </ToolBar>
+    </bottom>
 </BorderPane>

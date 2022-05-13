@@ -11,15 +11,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of {@link IDownloader} for <a href"www.animeworld.tv">AnimeWorld</a> website.
+ */
 public class AnimeWorldDownloder implements IDownloader {
-    public static final String WEBSITE = "https://www.animeworld.tv";
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String getUrl() {
-        return WEBSITE;
+        return "https://www.animeworld.tv";
     }
 
     /**
