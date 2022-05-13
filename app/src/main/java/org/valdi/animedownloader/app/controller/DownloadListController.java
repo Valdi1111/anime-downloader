@@ -13,10 +13,11 @@ import org.valdi.animedownloader.app.App;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DownloadListController {
     @FXML
-    private VBox downloadsPane;
+    private VBox downloadList;
 
     @FXML
     private void onDownload() throws IOException {
@@ -25,10 +26,10 @@ public class DownloadListController {
         final Scene scene = new Scene(loader.load());
         // Setup stage
         final Stage stage = new Stage();
-        final Stage primaryStage = (Stage) this.downloadsPane.getScene().getWindow();
-        stage.getIcons().addAll(primaryStage.getIcons());
+        final Stage primary = (Stage) this.downloadList.getScene().getWindow();
+        stage.getIcons().addAll(primary.getIcons());
         stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(primaryStage);
+        stage.initOwner(primary);
         stage.setTitle(App.NAME);
         stage.setResizable(false);
         stage.setScene(scene);
@@ -37,22 +38,39 @@ public class DownloadListController {
         final NewDownloadController controller = loader.getController();
         final List<IEpisode> episodes = controller.getEpisodes();
         final File folder = controller.getFolder();
-        if(episodes.isEmpty()) {
+        if (episodes.isEmpty()) {
             return;
         }
         // Download episodes
-        for(final IEpisode e : episodes) {
-            final FXMLLoader itemLoader = new FXMLLoader(App.class.getResource("download-item.fxml"));
-            itemLoader.setControllerFactory(c -> new DownloadItemController(e, folder));
-            itemLoader.load();
-            this.downloadsPane.getChildren().add(itemLoader.getRoot());
+        for (final IEpisode episode : episodes) {
+            final DownloadItemController download = new DownloadItemController(episode, folder);
+            final FXMLLoader item = new FXMLLoader(App.class.getResource("download-item.fxml"));
+            item.setController(download);
+            item.setRoot(download);
+            item.load();
+            this.downloadList.getChildren().add(download);
         }
     }
 
     @FXML
-    private void onExit() {
+    private void onExit() throws InterruptedException {
+        this.downloadList.getChildren().stream()
+                .filter(DownloadItemController.class::isInstance)
+                .map(DownloadItemController.class::cast)
+                .forEach(DownloadItemController::cancel);
         Platform.exit();
         System.exit(0);
+    }
+
+    @FXML
+    private void removeDownloads() {
+        this.downloadList.getChildren().removeAll(
+                this.downloadList.getChildren().stream()
+                        .filter(DownloadItemController.class::isInstance)
+                        .map(DownloadItemController.class::cast)
+                        .filter(DownloadItemController::isSelected)
+                        .collect(Collectors.toList())
+        );
     }
 
 }

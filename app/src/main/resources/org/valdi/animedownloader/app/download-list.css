@@ -1,4 +1,4 @@
-.progress-bar > .bar {
+.progress-bar:running > .bar {
     -fx-background-color: linear-gradient(
             from 0px .75em to .75em 0px,
             repeat,
@@ -7,4 +7,13 @@
             derive(-fx-accent, 30%) 50%,
             derive(-fx-accent, 30%) 99%
     );
+}
+.progress-bar:succeeded > .bar {
+     -fx-background-color: #90EE90;
+ }
+.progress-bar:cancelled > .bar {
+    -fx-background-color: #FF7F7F;
+}
+.progress-bar:failed > .bar {
+    -fx-background-color: #FF7F7F;
 }

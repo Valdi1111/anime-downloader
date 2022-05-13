@@ -3,10 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.valdi.animedownloader.app.controller.DownloadListController"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.2"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.valdi.animedownloader.app.controller.DownloadListController">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
@@ -32,7 +31,7 @@
         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="350.0" prefWidth="600.0" vbarPolicy="ALWAYS"
                     BorderPane.alignment="CENTER">
             <content>
-                <VBox fx:id="downloadsPane" stylesheets="@download-list.css"/>
+                <VBox fx:id="downloadList" stylesheets="@download-list.css"/>
             </content>
         </ScrollPane>
     </center>
