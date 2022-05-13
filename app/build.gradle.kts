@@ -4,7 +4,16 @@
 
 plugins {
     id("org.valdi.animedownloader.java-application-conventions")
+
+    // Java fx
     id ("org.openjfx.javafxplugin") version "0.0.10"
+
+    /*
+     * Adds tasks to export a runnable jar.
+     * In order to create it, launch the "shadowJar" task.
+     * The runnable jar will be found in build/libs/projectname-all.jar
+     */
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 javafx {
